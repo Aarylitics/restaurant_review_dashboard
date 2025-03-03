@@ -86,10 +86,6 @@ if menu == "Home":
 
 @st.cache_resource
 ####### PARSE REVIEWS#####
-
-
-
-@st.cache_resource
 def get_driver():
     return webdriver.Chrome(
         service=Service(
@@ -100,7 +96,9 @@ def get_driver():
 
 options = Options()
 options.add_argument("--disable-gpu")
-options.add_argument("--headless")
+options.add_argument("--no-sandbox") # Bypass OS security model
+options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
+#options.add_argument("--headless")
 
 driver = get_driver()
 

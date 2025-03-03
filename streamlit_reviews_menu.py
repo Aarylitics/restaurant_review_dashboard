@@ -38,6 +38,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 #st.sleep for timer?
 
@@ -79,8 +82,6 @@ if menu == "Home":
 
 @st.cache_data
 ####### PARSE REVIEWS#####
-
-@st.experimental_memo
 def get_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 

@@ -80,7 +80,7 @@ if menu == "Home":
 @st.cache_data
 ####### PARSE REVIEWS#####
 
-#@st.experimental_singleton
+@st.experimental_memo
 def get_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 

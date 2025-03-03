@@ -49,12 +49,12 @@ from selenium.webdriver.chrome.options import Options
 st.set_page_config(
     page_title='Restaurant Review Dashboard',
     layout="wide",
-    initial_sidebar_state="expanded",
-    page_icon="IMG_1109.png"    
+    initial_sidebar_state="expanded"#,
+    #page_icon="IMG_1109.png"    
 )
 
 #set sidebar
-st.sidebar.image("IMG_1109.png", use_container_width=True)
+#st.sidebar.image("IMG_1109.png", use_container_width=True)
 st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])

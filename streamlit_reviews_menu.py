@@ -154,9 +154,10 @@ def scrape_data():
          reviews = BeautifulSoup(driver.page_source,'html.parser')
          driver.quit()
          return rest_name, rest_type, value, total_rating, num_reviews, reviews
-     except Exception as e:
+    except Exception as e:
         st.error(f"Error scraping data: {e}")
         return None
+     
 
 
 if __name__ == "__main__":

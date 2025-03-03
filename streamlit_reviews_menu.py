@@ -85,17 +85,28 @@ if menu == "Home":
 
 ####### PARSE REVIEWS#####
 
-def scrape_data():
+import streamlit as st
 
-    chrome_options = Options()
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
-    chrome_options.add_argument('--disable-extensions')
-    chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
-    
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+@st.experimental_singleton
+def get_driver():
+    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+options = Options()
+options.add_argument('--disable-gpu')
+options.add_argument('--headless')
+options.add_argument("--no-sandbox") # Bypass OS security model
+options.add_argument('--disable-extensions')
+options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
+
+driver = get_driver()
+driver.get('http://example.com')
+
+def scrape_data():
 
     driver.get(url)
 

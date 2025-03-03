@@ -42,6 +42,10 @@ from mlxtend.frequent_patterns import association_rules
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 
 #st.sleep for timer?
 
@@ -49,12 +53,12 @@ from selenium.webdriver.chrome.options import Options
 st.set_page_config(
     page_title='Restaurant Review Dashboard',
     layout="wide",
-    initial_sidebar_state="expanded"#,
-    #page_icon="IMG_1109.png"    
+    initial_sidebar_state="expanded",
+    page_icon="IMG_1109.png"    
 )
 
 #set sidebar
-#st.sidebar.image("IMG_1109.png", use_container_width=True)
+st.sidebar.image("IMG_1109.png", use_container_width=True)
 st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
@@ -80,80 +84,92 @@ if menu == "Home":
     st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")
     st.write("Refresh the page!")
 
-@st.cache_data
+@st.cache_resource
 ####### PARSE REVIEWS#####
+
+
+
+@st.cache_resource
+def get_driver():
+    return webdriver.Chrome(
+        service=Service(
+            ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+        ),
+        options=options,
+    )
+
+options = Options()
+options.add_argument("--disable-gpu")
+options.add_argument("--headless")
+
+driver = get_driver()
+
+
 def scrape_data():
 
-    chrome_options = Options()
-    chrome_options.add_argument('--disable-gpu')
-    #chrome_options.add_argument('--headless')
-    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
-    chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
     try: 
-         service = Service(ChromeDriverManager().install())
-         driver = webdriver.Chrome(service=service, options=chrome_options)
-         st.write("ChromeDriver started successfully!")
+         
      
-         driver.get(url)
+        driver.get(url)
      
-         #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
-         import time
-         time.sleep(3)
+        #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
+        import time
+        time.sleep(3)
      
-         #obtain title
-         rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
+        #obtain title
+        rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
      
-         #obtain resturant type
-         rest_type = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
+        #obtain resturant type
+        rest_type = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
      
-         #obtain restaurant value
-         value = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
+        #obtain restaurant value
+        value = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
+        
+        #get restaurant address
+        #address = driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div[8]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[9]/div[3]/button/div/div[2]/div[1]").text
+        #can create a dictionary, key is state, div number is entry; search for state, if state, then that div number
      
-         #get restaurant address
-         #address = driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div[8]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[9]/div[3]/button/div/div[2]/div[1]").text
-         #can create a dictionary, key is state, div number is entry; search for state, if state, then that div number
+        #if need to go thru newer reviews first, insert that in here:
      
-         #if need to go thru newer reviews first, insert that in here:
+        #code chunk below helps us find review button. Got this code off of medium
+        driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
      
-         #code chunk below helps us find review button. Got this code off of medium
-         driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
+        #obtain rating
+        total_rating = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]').text
      
-         #obtain rating
-         total_rating = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]').text
+        #scroll till all reviews are loaded up
+            #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
+        num_reviews = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[3]').text.split(" ")[0] #this code gives us the number
      
-         #scroll till all reviews are loaded up
-             #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
-         num_reviews = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[3]').text.split(" ")[0] #this code gives us the number
+        #some reviews may have columns, will want to take that out
+        if num_reviews.find(",") == True:
+            num_reviews = num_reviews.replace(",","")
+        else:
+            num_reviews = num_reviews
      
-         #some reviews may have columns, will want to take that out
-         if num_reviews.find(",") == True:
-             num_reviews = num_reviews.replace(",","")
-         else:
-             num_reviews = num_reviews
+        #now that we have number of reviews, we can scroll through reviews and load up each review
      
-         #now that we have number of reviews, we can scroll through reviews and load up each review
+        height = 0
+        while height <= (int(num_reviews)):
+            try:
+                scroll_element = driver.find_element(By.XPATH, "//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]") #want to scroll first; finds scroll bar element
+                try: #find "more"
+                    more_element = driver.find_element(By.XPATH, "//button[@aria-label='See more']")
+                    if more_element.get_attribute("aria-expanded") == "false":
+                        more_element.click()
+                        time.sleep(.25) #might try (int(num_reviews)/10) (would need to divide by the number of 0's plus 2) len(str(num_reviews)).
+                except NoSuchElementException: #scroll if no "more"
+                    driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_element)
+                    time.sleep(.25)
+            except NoSuchElementException:
+                print("Scrollbar element not found.")
+                break
+            height += 1 #once height is reached... or it doesnt touch anymore, break
      
-         height = 0
-         while height <= (int(num_reviews)):
-             try:
-                 scroll_element = driver.find_element(By.XPATH, "//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]") #want to scroll first; finds scroll bar element
-                 try: #find "more"
-                     more_element = driver.find_element(By.XPATH, "//button[@aria-label='See more']")
-                     if more_element.get_attribute("aria-expanded") == "false":
-                         more_element.click()
-                         time.sleep(.25) #might try (int(num_reviews)/10) (would need to divide by the number of 0's plus 2) len(str(num_reviews)).
-                 except NoSuchElementException: #scroll if no "more"
-                     driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_element)
-                     time.sleep(.25)
-             except NoSuchElementException:
-                 print("Scrollbar element not found.")
-                 break
-             height += 1 #once height is reached... or it doesnt touch anymore, break
-     
-         #acquire reviews and parse them into a dataset #obtained from medium: https://medium.com/@isguzarsezgin/scraping-google-reviews-with-selenium-python-23135ffcc331
-         reviews = BeautifulSoup(driver.page_source,'html.parser')
-         driver.quit()
-         return rest_name, rest_type, value, total_rating, num_reviews, reviews
+        #acquire reviews and parse them into a dataset #obtained from medium: https://medium.com/@isguzarsezgin/scraping-google-reviews-with-selenium-python-23135ffcc331
+        reviews = BeautifulSoup(driver.page_source,'html.parser')
+        driver.quit()
+        return rest_name, rest_type, value, total_rating, num_reviews, reviews
     except Exception as e:
         st.error(f"Error scraping data: {e}")
         return None

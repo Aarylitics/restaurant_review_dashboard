@@ -119,5 +119,7 @@ urllib3==2.2.3
 vaderSentiment==3.3.2
 wcwidth==0.2.13
 websocket-client==1.8.0
+webdriver-manager==4.0.2
+websocket-client==1.8.0
 wsproto==1.2.0
 zipp==3.21.0

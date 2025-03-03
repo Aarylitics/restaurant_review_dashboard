@@ -89,15 +89,14 @@ def installff():
   os.system('ln -s /home/appuser/venv/lib/python3.7/site-packages/seleniumbase/drivers/geckodriver/home/appuser/venv/bin/geckodriver')
 _ = installff()
 
-def get_driver():
-    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+# def get_driver():
+#     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 options = Options()
 options.add_argument('--disable-gpu')
 options.add_argument('--headless')
 
-driver = get_driver()
-
+driver = webdriver.Chrome()
 def scrape_data():
    
     driver.get(url)

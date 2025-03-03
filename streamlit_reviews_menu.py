@@ -61,7 +61,7 @@ st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
 st.sidebar.divider()
-url = st.sidebar.text_input("Enter URL")
+url = st.sidebar.text_input("Google Maps URL", "")
 
 if menu == "Home":
     st.title("Home/How to Use!")
@@ -96,13 +96,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import pandas as pd
 
-# Streamlit UI Configuration
-st.set_page_config(page_title="Restaurant Review Dashboard", layout="wide")
-st.sidebar.title('Restaurant Review Dashboard')
-st.sidebar.write("Enter a Google Maps URL to scrape restaurant reviews.")
-
 # User input for Google Maps URL
-url = st.sidebar.text_input("Google Maps URL", "")
+
 
 # Selenium WebDriver Setup
 def setup_driver():

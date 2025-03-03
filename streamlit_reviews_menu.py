@@ -86,103 +86,75 @@ if menu == "Home":
 ####### PARSE REVIEWS#####
 
 import streamlit as st
-
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import pandas as pd
 
-# Define options BEFORE using it
-options = Options()
-options.add_argument('--disable-gpu')
-options.add_argument('--headless')
-options.add_argument("--no-sandbox")  # Bypass OS security model
-options.add_argument('--disable-extensions')
-options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+# Streamlit UI Configuration
+st.set_page_config(page_title="Restaurant Review Dashboard", layout="wide")
+st.sidebar.title('Restaurant Review Dashboard')
+st.sidebar.write("Enter a Google Maps URL to scrape restaurant reviews.")
 
-def get_driver():
-    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+# User input for Google Maps URL
+url = st.sidebar.text_input("Google Maps URL", "")
 
-# Now call the function
-driver = get_driver()
+# Selenium WebDriver Setup
+def setup_driver():
+    options = Options()
+    options.add_argument("--headless")  # Run in headless mode for Streamlit
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    service = Service("chromedriver")
+    driver = webdriver.Chrome(service=service, options=options)
+    return driver
 
-
-def scrape_data():
-
+# Function to extract restaurant name and reviews
+def scrape_reviews(url):
+    driver = setup_driver()
     driver.get(url)
-
-    #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
-    import time
     time.sleep(3)
-
-    #obtain title
-    rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
-
-    #obtain resturant type
-    rest_type = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
-
-    #obtain restaurant value
-    value = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
-
-    #get restaurant address
-    #address = driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div[8]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[9]/div[3]/button/div/div[2]/div[1]").text
-    #can create a dictionary, key is state, div number is entry; search for state, if state, then that div number
-
-    #if need to go thru newer reviews first, insert that in here:
-
-    #code chunk below helps us find review button. Got this code off of medium
-    driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
-
-    #obtain rating
-    total_rating = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]').text
-
-    #scroll till all reviews are loaded up
-        #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
-    num_reviews = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[3]').text.split(" ")[0] #this code gives us the number
-
-    #some reviews may have columns, will want to take that out
-    if num_reviews.find(",") == True:
-        num_reviews = num_reviews.replace(",","")
-    else:
-        num_reviews = num_reviews
-
-    #now that we have number of reviews, we can scroll through reviews and load up each review
-
-    height = 0
-    while height <= (int(num_reviews)):
-        try:
-            scroll_element = driver.find_element(By.XPATH, "//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]") #want to scroll first; finds scroll bar element
-            try: #find "more"
-                more_element = driver.find_element(By.XPATH, "//button[@aria-label='See more']")
-                if more_element.get_attribute("aria-expanded") == "false":
-                    more_element.click()
-                    time.sleep(.25) #might try (int(num_reviews)/10) (would need to divide by the number of 0's plus 2) len(str(num_reviews)).
-            except NoSuchElementException: #scroll if no "more"
-                driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_element)
-                time.sleep(.25)
-        except NoSuchElementException:
-            print("Scrollbar element not found.")
-            break
-        height += 1 #once height is reached... or it doesnt touch anymore, break
-
-    #acquire reviews and parse them into a dataset #obtained from medium: https://medium.com/@isguzarsezgin/scraping-google-reviews-with-selenium-python-23135ffcc331
-    review = BeautifulSoup(driver.page_source,'html.parser')
-    driver.quit()
-    return rest_name, rest_type, value, total_rating, num_reviews, review
-
-if __name__ == "__main__":
-    review = scrape_data()
-
-    if review:
-        rest_name, rest_type, value, total_rating, num_reviews, reviews = review
-
-        st.sidebar.write(f"**Restaurant Name**: {rest_name}")
-        st.sidebar.write(f"**Restaurant Type**: {rest_type}")
-        st.sidebar.write(f"**Average Value Spend**: {value}")
-        st.sidebar.write(f"**Average Rating (Google)**: {total_rating}")
-        st.sidebar.write(f"**Number of Reviews**: {num_reviews}")
+    
+    try:
+        # Extract restaurant name
+        name = driver.find_element(By.TAG_NAME, "h1").text
         
-@st.cache_data
+        # Click on reviews button
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(@aria-label, 'reviews')]"))
+        ).click()
+        time.sleep(3)
+
+        # Scroll to load more reviews
+        scrollable_div = driver.find_element(By.CLASS_NAME, "m6QErb")
+        for _ in range(5):  # Adjust range for more reviews
+            driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scrollable_div)
+            time.sleep(2)
+        
+        # Extract review elements
+        reviews = driver.find_elements(By.CLASS_NAME, "wiI7pd")
+        ratings = driver.find_elements(By.CLASS_NAME, "kvMYJc")
+        
+        review_data = []
+        for review, rating in zip(reviews, ratings):
+            review_data.append({
+                "review": review.text,
+                "rating": rating.get_attribute("aria-label")
+            })
+        
+        driver.quit()
+        return name, pd.DataFrame(review_data)
+    
+    except Exception as e:
+        driver.quit()
+        return None, f"Error: {str(e)}"
+
 
 #Extract restaurant basic informaton: Name, Address, Number of Reviews, Average Rating, Restaurant Type, Map
 # st.sidebar.write(f"**Restaurant Name**: {rest_name}")

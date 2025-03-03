@@ -108,7 +108,7 @@ driver.get('http://example.com')
 
 def scrape_data():
 
-    driver.get(url)
+    driver.get('https://www.google.com/maps/place/Q+noodles/@35.7767691,-78.7703452,863m/data=!3m2!1e3!4b1!4m6!3m5!1s0x89acf3a986fd6e5f:0x88630abce4ae55df!8m2!3d35.7767691!4d-78.7677703!16s%2Fg%2F11khnjc3w8?entry=ttu&g_ep=EgoyMDI1MDIyNi4xIKXMDSoASAFQAw%3D%3D')
 
     #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
     import time

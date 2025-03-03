@@ -1,6 +1,5 @@
 [global]
 showWarningOnDirectExecution = false
-CachedWidgetWarning = false
 
 [client]
 showErrorDetails = false

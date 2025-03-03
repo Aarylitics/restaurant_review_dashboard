@@ -100,7 +100,6 @@ options.add_argument("--no-sandbox")  # Bypass OS security model
 options.add_argument('--disable-extensions')
 options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
 
-@st.cache_resource
 def get_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 

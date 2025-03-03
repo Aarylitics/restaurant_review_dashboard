@@ -81,6 +81,10 @@ if menu == "Home":
 ####### PARSE REVIEWS#####
 def scrape_data():
     driver = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Ensure headless execution
+    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+    chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
 
     #using ramen shop as base -- eventually do it so people
 

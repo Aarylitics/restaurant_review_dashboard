@@ -2,11 +2,17 @@
 
 #import packages/requirements
 import pandas as pd
-import requests
+import selenium
+import os,sys
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
+import json
 from bs4 import BeautifulSoup
 import numpy as np
 import time
-import streamlit as st
+import streamlit as st 
 import nltk
 import string
 import re
@@ -15,32 +21,42 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import dateparser
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from nltk.corpus.reader import WordListCorpusReader
+from nltk.corpus.reader.api import *
 from nltk.corpus import opinion_lexicon
 import matplotlib.pyplot as plt
+from nltk import FreqDist
 import seaborn as sns
+from nltk.tokenize import word_tokenize
+from nltk.probability import FreqDist
+
+from nltk import ngrams, FreqDist
 from bertopic import BERTopic
-from umap import UMAP
+from umap import UMAP #import UMAP to get reproducable effects from bertopic
 from sentence_transformers import SentenceTransformer, util
 from hdbscan import HDBSCAN
 import plotly.graph_objects as go
+
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 import lxml
 
-# Download NLTK data
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('opinion_lexicon')
+#st.sleep for timer?
 
 #page layout
 st.set_page_config(
      page_title='Restaurant Review Dashboard',
      layout="wide",
-     initial_sidebar_state="expanded"
+     initial_sidebar_state="expanded"#,
+     #page_icon="IMG_1109.png"
+     
 )
 
 #set sidebar
+#st.sidebar.image("IMG_1109.png", use_container_width=True)
 st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
@@ -49,47 +65,101 @@ url = st.sidebar.text_input("Enter URL")
 
 if menu == "Home":
     st.title("Home/How to Use!")
+
+    #Intro
+    
     st.write("Ever wonder what to order at a restaurant, but don't feel like reading the plethora of Google and Yelp reviews? Yea me too buddy. Hence why I created this *hopefully* cool and helpful dashboard!!")
     st.write("To ensure the best use-case of this dashboard, I will go through on how to set it up!")
-    st.write("###### **DISCLAIMER: ** THIS APP NO LONGER USES CHROME. IT WILL NOW SCRAPE DATA DIRECTLY. ")
+    st.write("###### **DISCLAIMER: ** CHROME WILL OPEN UP AUTOMATICALLY AND AUTOMATICALLY SCRAPE. DONT BE SCARED IF IT POPS UP OUTTA NOWHERE")
     st.write("First up, you will input a Google Maps URL into the text box on the left hand side! Note that the URL has to be from a very specific page, such as this: ")
     st.image("example.png", use_container_width=True)
     st.write("To do this, you can click on the restaurant name and copy that URL! otherwise it will not run.")
     st.write("If you get the URL from a page that looks like the image down below, the code will **NOT RUN**!")
     st.image("bad_example.png",use_container_width=True)
-    st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10).")
+    st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10). You should see it scrape in real-time! (So cool right!!! Don't show all your excitement at once)")
 
     st.write("if you get an error similar to this: ")
     st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")
     st.write("Refresh the page!")
 
+
 ####### PARSE REVIEWS#####
 
-def scrape_data(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
-        soup = BeautifulSoup(response.content, 'html.parser')
+def scrape_data():
 
-        # Extract data using BeautifulSoup
-        rest_name = soup.find('h1', class_='DUwDvf').text #change class if needed
-        rest_type = soup.find('button', class_='DkEaL').text #change class if needed
-        value = soup.find('span', class_='mgr77e').text #change class if needed
-        total_rating = soup.find('div', class_='F7nice').text #change class if needed
-        num_reviews = soup.find('div', class_='fontBodyMedium').text.split(" ")[0] #change class if needed
-        reviews = soup.find('div', class_='m6QErb DxyBC snByac') #change class if needed
+    chrome_options = Options()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
+    
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
-        return rest_name, rest_type, value, total_rating, num_reviews, reviews
+    driver.get(url)
 
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching URL: {e}")
-        return None
-    except AttributeError:
-        st.error("Error parsing HTML. The website structure might have changed.")
-        return None
+    #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
+    import time
+    time.sleep(3)
+
+    #obtain title
+    rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
+
+    #obtain resturant type
+    rest_type = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
+
+    #obtain restaurant value
+    value = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
+
+    #get restaurant address
+    #address = driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div[8]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[9]/div[3]/button/div/div[2]/div[1]").text
+    #can create a dictionary, key is state, div number is entry; search for state, if state, then that div number
+
+    #if need to go thru newer reviews first, insert that in here:
+
+    #code chunk below helps us find review button. Got this code off of medium
+    driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
+
+    #obtain rating
+    total_rating = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]').text
+
+    #scroll till all reviews are loaded up
+        #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
+    num_reviews = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[3]').text.split(" ")[0] #this code gives us the number
+
+    #some reviews may have columns, will want to take that out
+    if num_reviews.find(",") == True:
+        num_reviews = num_reviews.replace(",","")
+    else:
+        num_reviews = num_reviews
+
+    #now that we have number of reviews, we can scroll through reviews and load up each review
+
+    height = 0
+    while height <= (int(num_reviews)):
+        try:
+            scroll_element = driver.find_element(By.XPATH, "//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]") #want to scroll first; finds scroll bar element
+            try: #find "more"
+                more_element = driver.find_element(By.XPATH, "//button[@aria-label='See more']")
+                if more_element.get_attribute("aria-expanded") == "false":
+                    more_element.click()
+                    time.sleep(.25) #might try (int(num_reviews)/10) (would need to divide by the number of 0's plus 2) len(str(num_reviews)).
+            except NoSuchElementException: #scroll if no "more"
+                driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_element)
+                time.sleep(.25)
+        except NoSuchElementException:
+            print("Scrollbar element not found.")
+            break
+        height += 1 #once height is reached... or it doesnt touch anymore, break
+
+    #acquire reviews and parse them into a dataset #obtained from medium: https://medium.com/@isguzarsezgin/scraping-google-reviews-with-selenium-python-23135ffcc331
+    review = BeautifulSoup(driver.page_source,'html.parser')
+    driver.quit()
+    return rest_name, rest_type, value, total_rating, num_reviews, review
 
 if __name__ == "__main__":
-    review = scrape_data(url)
+    review = scrape_data()
 
     if review:
         rest_name, rest_type, value, total_rating, num_reviews, reviews = review
@@ -99,65 +169,91 @@ if __name__ == "__main__":
         st.sidebar.write(f"**Average Value Spend**: {value}")
         st.sidebar.write(f"**Average Rating (Google)**: {total_rating}")
         st.sidebar.write(f"**Number of Reviews**: {num_reviews}")
-
+        
 @st.cache_data
+
+#Extract restaurant basic informaton: Name, Address, Number of Reviews, Average Rating, Restaurant Type, Map
+# st.sidebar.write(f"**Restaurant Name**: {rest_name}")
+# st.sidebar.write(f"**Restaurant Type**: {rest_type}")
+# st.sidebar.write(f"**Average Value Spend**: {value}")
+# st.sidebar.write(f"**Average Rating (Google)**: {total_rating}")
+# st.sidebar.write(f"**Number of Reviews**: {num_reviews}")
+#print(address)
+
 ########### Create Datasets #############
 def get_reviews(reviews):
+
+    #create a dictionary to store reviews in
     review_dict = {
-        "Review Rating": [],
+        "Review Rating":[],
         "Review Time": [],
         "Review Text": []
     }
-    for result in reviews.find_all('div', class_='jJc9Ad'):
+    #Write for loop to gather information
+    for result in reviews.find_all('div', class_='jJc9Ad'): 
         review_text_element = result.find('span', class_='wiI7pd')
-        if review_text_element:
+        if review_text_element:  # Only process reviews with text (earlier got mismatch array sizes)
+            # Extract review text
             review_text = review_text_element.text
+            # Extract review rating
             review_rating_element = result.find('span', class_='kvMYJc')
             review_rating = review_rating_element["aria-label"]
+            # Extract review time
             review_time_element = result.find('span', class_='rsqaWe')
             review_time = review_time_element.text
+            # Append data to the dictionary
             review_dict["Review Rating"].append(review_rating)
             review_dict["Review Time"].append(review_time)
             review_dict["Review Text"].append(review_text)
-    return pd.DataFrame(review_dict)
 
+    return(pd.DataFrame(review_dict)) 
+
+#get the top words used in the reviews
 def get_top_mentions(reviews):
     mentions_dict = {
         "Mention": []
     }
-    for result in reviews.find_all('div', class_='KNfEk aUjao'):
+
+    for result in reviews.find_all('div', class_='KNfEk aUjao'): 
+
+        # Extract mention
         mention_element = result.find('button', class_="e2moi")
         mention = mention_element["aria-label"]
         mentions_dict["Mention"].append(mention)
+
     return pd.DataFrame(mentions_dict)
 
-def get_other_stuff(reviews):
-    stuff = []
-    for result in reviews.find_all('span', class_="RfDO5c"):
-        stuff_dict = {
-            "Service_Type": None,
-            "Meal Type": None,
-            "Price per Person": None,
-            "Food": None,
-            "Service": None,
-            'Atmosphere': None,
-            'Recommended Dishes': None,
-            'Parking Space': None,
-            'Parking Options': None,
-            'Wheelchair Accessible': None
-        }
 
-        # Get service
+def get_other_stuff(reviews):
+
+    stuff = []
+
+    for result in reviews.find_all('span', class_="RfDO5c"):
+
+        stuff_dict = {
+                "Service_Type": None,
+                "Meal Type": None,
+                "Price per Person": None,
+                "Food": None,
+                "Service": None,
+                'Atmosphere': None,
+                'Recommended Dishes': None,
+                'Parking Space': None,
+                'Parking Options': None,
+                'Wheelchair Accessible': None
+            }
+        
+        #get service
         service_locate = result.find(string="Service")
         service = service_locate.find_next('span').get_text() if service_locate else None
         stuff_dict["Service_Type"] = service
 
-        # Get meal type
+        #get meal type
         meal_type_locate = result.find(string="Meal type")
         meal_type = meal_type_locate.find_next('span').get_text() if meal_type_locate else None
         stuff_dict["Meal Type"] = meal_type
 
-        # Get price per person
+        #get price per person
         pp_locate = result.find('span', attrs={'aria-label': True})
         pp = pp_locate['aria-label'] if pp_locate else None
         stuff_dict["Price per Person"] = pp
@@ -165,7 +261,7 @@ def get_other_stuff(reviews):
         # Extract ratings for Food, Service, Atmosphere, etc.
         ratings = {}
         for tag in result.find_all('b'):
-            key = tag.get_text(strip=True).replace(":", "")
+            key = tag.get_text(strip=True).replace(":", "")  # Remove colon
             value = tag.next_sibling.strip() if tag.next_sibling else None
             if value and value.isdigit():
                 ratings[key] = int(value)
@@ -177,23 +273,23 @@ def get_other_stuff(reviews):
         stuff_dict["Service"] = ratings.get("Service", None)
         stuff_dict["Atmosphere"] = ratings.get("Atmosphere", None)
 
-        # Get recommended dishes
-        recommended_locate = result.find(string='Recommended dishes')
+        #get recommended dishes
+        recommended_locate = result.find(string = 'Recommended dishes')
         recommend = recommended_locate.find_next('span').get_text() if recommended_locate else None
         stuff_dict["Recommended Dishes"] = recommend
 
-        # Get parking space
+        #get parking space
         parking_locate = result.find(string="Parking space")
         parking_space = parking_locate.find_next('span').get_text() if parking_locate else None
         stuff_dict["Parking Space"] = parking_space
 
-        # Get parking options
+        #get parking options
         parking_locate = result.find(string="Parking options")
         parking_options = parking_locate.find_next('span').get_text() if parking_locate else None
         stuff_dict["Parking Options"] = parking_options
 
-        # Wheelchair accessibility
-        wheelchair_locate = result.find(string="Wheelchair accessibility")
+        #Wheelchair accessibility
+        wheelchair_locate =result.find(string="Wheelchair accessibility")
         wheelchair = wheelchair_locate.find_next('span').get_text() if wheelchair_locate else None
         stuff_dict['Wheelchair Accessible'] = wheelchair
 

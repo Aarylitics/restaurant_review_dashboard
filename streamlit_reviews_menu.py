@@ -79,16 +79,19 @@ if menu == "Home":
 
 @st.cache_data
 ####### PARSE REVIEWS#####
+
+@st.experimental_singleton
+def get_driver():
+    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+options = Options()
+options.add_argument('--disable-gpu')
+options.add_argument('--headless')
+
+driver = get_driver()
+
 def scrape_data():
-    driver = webdriver.Chrome()
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Ensure headless execution
-    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
-    chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
-
-    #using ramen shop as base -- eventually do it so people
-
-    
+   
     driver.get(url)
 
     #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later

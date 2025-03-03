@@ -144,7 +144,7 @@ def scrape_reviews(url):
             })
         
         driver.quit()
-        return name, pd.DataFrame(review_data)
+        return name, pd.DataFrame(reviews)
     
     except Exception as e:
         driver.quit()

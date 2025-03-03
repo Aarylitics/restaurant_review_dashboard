@@ -47,15 +47,14 @@ from selenium.webdriver.chrome.options import Options
 
 #page layout
 st.set_page_config(
-     page_title='Restaurant Review Dashboard',
-     layout="wide",
-     initial_sidebar_state="expanded"#,
-     #page_icon="IMG_1109.png"
-     
+    page_title='Restaurant Review Dashboard',
+    layout="wide",
+    initial_sidebar_state="expanded",
+    page_icon="IMG_1109.png"    
 )
 
 #set sidebar
-#st.sidebar.image("IMG_1109.png", use_container_width=True)
+st.sidebar.image("IMG_1109.png", use_container_width=True)
 st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
@@ -87,7 +86,7 @@ def scrape_data():
 
     chrome_options = Options()
     chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--headless')
+    #chrome_options.add_argument('--headless')
     chrome_options.add_argument("--no-sandbox") # Bypass OS security model
     chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
     try: 

@@ -56,6 +56,7 @@ st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
 st.sidebar.divider()
+url = st.sidebar.text_input("Enter URL")
 
 if menu == "Home":
     st.title("Home/How to Use!")
@@ -83,7 +84,7 @@ def scrape_data():
 
     #using ramen shop as base -- eventually do it so people
 
-    url = st.sidebar.text_input("Enter URL")
+    
     driver.get(url)
 
     #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
@@ -147,7 +148,6 @@ def scrape_data():
 
 
 if __name__ == "__main__":
-    st.sidebar.title("Google Maps Review Scraper")
     reviews = scrape_data()
 
     if reviews:

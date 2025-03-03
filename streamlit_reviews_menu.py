@@ -92,6 +92,7 @@ def scrape_data():
     try: 
          service = Service(ChromeDriverManager().install())
          driver = webdriver.Chrome(service=service, options=chrome_options)
+         st.write("ChromeDriver started successfully!")
      
          driver.get(url)
      

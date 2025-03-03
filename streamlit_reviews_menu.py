@@ -83,22 +83,17 @@ if menu == "Home":
 
 @st.cache_data
 ####### PARSE REVIEWS#####
-
-def installff():
-  os.system('sbase install geckodriver')
-  os.system('ln -s /home/appuser/venv/lib/python3.7/site-packages/seleniumbase/drivers/geckodriver/home/appuser/venv/bin/geckodriver')
-_ = installff()
-
-# def get_driver():
-#     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-options = Options()
-options.add_argument('--disable-gpu')
-options.add_argument('--headless')
-
-driver = webdriver.Chrome()
 def scrape_data():
-   
+
+    chrome_options = Options()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+    chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
+
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+
     driver.get(url)
 
     #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later

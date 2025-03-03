@@ -83,6 +83,12 @@ if menu == "Home":
 
 @st.cache_data
 ####### PARSE REVIEWS#####
+
+def installff():
+  os.system('sbase install geckodriver')
+  os.system('ln -s /home/appuser/venv/lib/python3.7/site-packages/seleniumbase/drivers/geckodriver/home/appuser/venv/bin/geckodriver')
+_ = installff()
+
 def get_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 

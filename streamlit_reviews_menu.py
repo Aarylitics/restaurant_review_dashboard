@@ -136,20 +136,21 @@ def scrape_reviews(url):
         reviews = driver.find_elements(By.CLASS_NAME, "wiI7pd")
         ratings = driver.find_elements(By.CLASS_NAME, "kvMYJc")
         
-        # review_data = []
-        # for review, rating in zip(reviews, ratings):
-        #     review_data.append({
-        #         "review": review.text,
-        #         "rating": rating.get_attribute("aria-label")
-        #     })
+        review_data = []
+        for review, rating in zip(reviews, ratings):
+            review_data.append({
+                "review": review.text,
+                "rating": rating.get_attribute("aria-label")
+            })
         
-        # driver.quit()
-        # return name, pd.DataFrame(reviews)
+        driver.quit()
+        return name, pd.DataFrame(reviews)
     
     except Exception as e:
         driver.quit()
         return None, f"Error: {str(e)}"
 
+scrape_reviews(url)
 
 #Extract restaurant basic informaton: Name, Address, Number of Reviews, Average Rating, Restaurant Type, Map
 # st.sidebar.write(f"**Restaurant Name**: {rest_name}")

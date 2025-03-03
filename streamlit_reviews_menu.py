@@ -89,6 +89,7 @@ def scrape_data():
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--headless')
     chrome_options.add_argument("--no-sandbox") # Bypass OS security model
+    chrome_options.add_argument('--disable-extensions')
     chrome_options.add_argument("--disable-dev-shm-usage") # overcome limited resource problems
     try: 
          service = Service(ChromeDriverManager().install())

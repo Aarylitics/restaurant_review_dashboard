@@ -43,7 +43,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import lxml
-#from webdriver_manager.core.os_type import ChromeType
+from webdriver_manager.core.os_type import ChromeType
 
 #st.sleep for timer?
 
@@ -95,11 +95,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 
-@st.cache_resource
+
+
 # def get_driver():
 #     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# Now call the function
+# # Now call the function
+
 driver = webdriver.Chrome()
 
 
@@ -120,7 +122,7 @@ driver = webdriver.Chrome()
 #     )
 
 # driver = get_driver()
-
+@st.cache_resource
 
 def scrape_data():
 

@@ -86,24 +86,6 @@ if menu == "Home":
 
 ####### PARSE REVIEWS#####
 
-import streamlit as st
-
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
-from bs4 import BeautifulSoup
-import time
-import streamlit as st
-
-@st.cache_resource
-
 def get_website_content(url):
     driver = None
     try:
@@ -113,30 +95,11 @@ def get_website_content(url):
         options.add_argument('--disable-gpu')
         options.add_argument('--window-size=1920,1200')
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
-                                    options=options)
+                                  options=options)
         st.write(f"DEBUG:DRIVER:{driver}")
         driver.get(url)
         time.sleep(5)
-        html_doc = driver.page_source
-        return BeautifulSoup(html_doc, "html.parser")
-    except Exception as e:
-        st.write(f"DEBUG:INIT_DRIVER:ERROR:{e}")
-    finally:
-        if driver is not None:
-            driver.quit()
-
-def scrape_data(url):
-    driver = None
-    try:
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--window-size=1920,1200')
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
-                                    options=options)
-        driver.get(url)
-        time.sleep(3)
-
+        
         rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
         rest_type = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
         value = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
@@ -166,13 +129,14 @@ def scrape_data(url):
             height += 1
 
         review = BeautifulSoup(driver.page_source, 'html.parser')
+        driver.quit()
         return rest_name, rest_type, value, total_rating, num_reviews, review
     except Exception as e:
-        st.write(f"DEBUG:SCRAPE_DATA:ERROR:{e}")
-        return None,None,None,None,None,None
+        st.write(f"DEBUG:INIT_DRIVER:ERROR:{e}")
     finally:
-        if driver is not None:
-            driver.quit()
+        if driver is not None: driver.quit()
+    return None
+
 
 rest_name, rest_type, value, total_rating, num_reviews, review = scrape_data(url)
 

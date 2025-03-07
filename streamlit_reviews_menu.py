@@ -98,7 +98,7 @@ def scrape_data(url):
                                   options=options)
         st.write(f"DEBUG:DRIVER:{driver}")
         driver.get(url)
-        time.sleep(5)
+        time.sleep(7)
         
         rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
         rest_type = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text

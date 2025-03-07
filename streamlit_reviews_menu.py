@@ -105,7 +105,7 @@ def get_driver():
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 # Now call the function
-driver = get_driver()
+driver = webdriver.Chrome()
 
 
 def scrape_data():

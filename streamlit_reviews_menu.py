@@ -173,8 +173,6 @@ def scrape_data(url):
     finally:
         if driver is not None:
             driver.quit()
-        
-@st.cache_data
 
 rest_name, rest_type, value, total_rating, num_reviews, review = scrape_data(url)
 

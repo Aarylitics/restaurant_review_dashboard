@@ -93,8 +93,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-@st.cache_resource
-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -103,6 +101,8 @@ from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup
 import time
 import streamlit as st
+
+@st.cache_resource
 
 def get_website_content(url):
     driver = None

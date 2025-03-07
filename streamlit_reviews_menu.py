@@ -49,10 +49,10 @@ import lxml
 
 #page layout
 st.set_page_config(
-     page_title='Restaurant Review Dashboard',
-     layout="wide",
-     initial_sidebar_state="expanded"#,
-     #page_icon="IMG_1109.png"
+    page_title='Restaurant Review Dashboard',
+    layout="wide",
+    initial_sidebar_state="expanded"#,
+    #page_icon="IMG_1109.png"
      
 )
 
@@ -120,16 +120,15 @@ def get_website_content(url):
     return None
 
 def scrape_data():
-     driver = None
-     try:
-        # Using on Local
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--window-size=1920,1200')
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
-                                  options=options)
-        st.write(f"DEBUG:DRIVER:{driver}")
+    driver = None
+    # Using on Local
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--window-size=1920,1200')
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                                options=options)
+    st.write(f"DEBUG:DRIVER:{driver}")
 
     driver.get(url)
 

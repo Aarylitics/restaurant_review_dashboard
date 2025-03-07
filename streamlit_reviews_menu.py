@@ -101,11 +101,21 @@ options.add_argument('--disable-extensions')
 options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
 
 @st.cache_resource
-def get_driver():
-    return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+# def get_driver():
+#     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# Now call the function
-driver = webdriver.Chrome()
+# # Now call the function
+# driver = webdriver.Chrome()
+
+def get_driver():
+    return webdriver.Chrome(
+        service=Service(
+            ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+        ),
+        options=options,
+    )
+
+driver = get_driver()
 
 
 def scrape_data():

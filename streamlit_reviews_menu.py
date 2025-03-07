@@ -86,12 +86,12 @@ if menu == "Home":
 
 ####### PARSE REVIEWS#####
 
-def get_website_content(url):
+def scrape_data(url):
     driver = None
     try:
         # Using on Local
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
+        #options.add_argument('--headless')
         options.add_argument('--disable-gpu')
         options.add_argument('--window-size=1920,1200')
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),

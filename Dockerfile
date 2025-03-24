@@ -20,6 +20,9 @@ ENV CHROMEDRIVER_BIN=/usr/bin/chromedriver
 WORKDIR /app
 COPY . .
 
+CMD ["streamlit", "run", "streamlit_reviews_menu.py", "--server.port=$PORT", "--server.address=0.0.0.0"]
+
+
 # EXPOSE 8501
 
-CMD ["streamlit", "run", "streamlit_reviews_menu.py"]
+#CMD ["streamlit", "run", "streamlit_reviews_menu.py"]

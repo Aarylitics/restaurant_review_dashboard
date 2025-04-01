@@ -86,7 +86,7 @@ if menu == "Home":
 
 ####### PARSE REVIEWS#####
 
-@st.cache_data
+
 
 def scrape_data():
 
@@ -236,6 +236,7 @@ def get_top_mentions(reviews):
 
     return pd.DataFrame(mentions_dict)
 
+@st.cache_data
 
 def get_other_stuff(reviews):
 
@@ -315,7 +316,6 @@ def get_other_stuff(reviews):
 reviews_set = get_reviews(reviews)
 mentions_set = get_top_mentions(reviews)
 stuff_set = get_other_stuff(reviews) #the way the data was obtained/exported, grab counts/means with na exclusions
-
 
 ######### Text Analytics ##########
 
@@ -792,3 +792,4 @@ if menu == "What to Expect":
 # docker login
 # docker tag restaurant-dashboard spicyhahaha/restaurant-dashboard
 # docker push spicyhahaha/restaurant-dashboard
+

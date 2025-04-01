@@ -65,6 +65,8 @@ menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis",
 st.sidebar.divider()
 url = st.sidebar.text_input("Enter URL")
 
+st.sidebar.divider()
+st.sidebar.text("To scrape another restaurant, click 'Reset' down below!")
 if st.sidebar.button("Reset"):
     reviews_set = None  # Reset variable
     mentions_set = None
@@ -98,6 +100,7 @@ if menu == "Home":
     st.write("If you get the URL from a page that looks like the image down below, the code will **NOT RUN**!")
     st.image("bad_example.png",use_container_width=True)
     st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10).")
+    st.write("To look at other restaurants, clear the text box on the left hand side and click 'Reset'! This will ensure that you are starting a new slate.")
 
     #st.write("if you get an error similar to this: ")
     #st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")

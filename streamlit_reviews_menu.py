@@ -89,8 +89,8 @@ if st.sidebar.button("Reset"):
 if menu == "Home":
     st.title("Home/How to Use!")
 
-    import os
-    st.write(os.listdir())  # Display all files in the current directory
+    #import os
+    #st.write(os.listdir())  # Display all files in the current directory
 
 
     #Intro

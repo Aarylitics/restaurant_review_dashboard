@@ -17,12 +17,17 @@ ENV CHROMIUM_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_BIN=/usr/bin/chromedriver
 
 # Copy your project files into the container
+WORKDIR /app
 COPY . .
 
-# EXPOSE 8501
-#CMD ["streamlit", "run", "streamlit_reviews_menu.py"]
+# for streamlit running
 
-# Ensure Streamlit listens on the correct port and IP address
-CMD ["streamlit", "run", "streamlit_reviews_menu.py", "--server.port=$PORT", "--server.address=0.0.0.0"]
+EXPOSE 8501
+
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
 
+ENTRYPOINT ["streamlit", "run", "streamlit_reviews_menu.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+
+# CMD ["streamlit", "run", "streamlit_reviews_menu.py"]

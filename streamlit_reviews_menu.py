@@ -97,14 +97,15 @@ if menu == "Home":
     
     st.write("Ever wonder what to order at a restaurant, but don't feel like reading the plethora of Google and Yelp reviews? Yea me too buddy. Hence why I created this *hopefully* cool and helpful dashboard!!")
     st.write("To ensure the best use-case of this dashboard, I will go through on how to set it up!")
-    #st.write("###### **DISCLAIMER: ** CHROME WILL OPEN UP AUTOMATICALLY AND AUTOMATICALLY SCRAPE. DONT BE SCARED IF IT POPS UP OUTTA NOWHERE")
+    st.write("###### **DISCLAIMER: ** THERE ARE SO SO SOOOO MANY LIMITATIONS WITH THIS DASHBOARD. THIS IS NOT A PERFECT OUTPUT! IF TWO PLUS PEOPLE ARE RUNNING THIS AT THE SAME TIME, THE FIRST ONE TO RUN IT WILL HAVE THE WINNING OUTPUT. I AM WORKING ON IT.")
     st.write("First up, you will input a Google Maps URL into the text box on the left hand side! Note that the URL has to be from a very specific page, such as this: ")
     st.image("example.png", use_container_width=True)
     st.write("To do this, you can click on the restaurant name and copy that URL! otherwise it will not run.")
     st.write("If you get the URL from a page that looks like the image down below, the code will **NOT RUN**!")
     st.image("bad_example.png",use_container_width=True)
     st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10).")
-    st.write("To look at other restaurants, clear the text box on the left hand side and click 'Reset'! This will ensure that you are starting a new slate.")
+    st.write("If you currently see a restaurant in the left-hand side, that means someone prior to you has used it! Huzzah, you can look at that information and steal it! To remove it, click the reset button, and then 'rerun' in the three-dot menu (top right side!)")
+    st.write("To look at other restaurants, clear the text box on the left-hand side and click 'Reset'! This will ensure that you are starting a new slate.")
 
     #st.write("if you get an error similar to this: ")
     #st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")

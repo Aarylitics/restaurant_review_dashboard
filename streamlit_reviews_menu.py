@@ -52,7 +52,8 @@ from selenium.webdriver.chrome.options import Options
 st.set_page_config(
      page_title='Restaurant Review Dashboard',
      layout="wide",
-     initial_sidebar_state="expanded" #,page_icon="IMG_1109.png"
+     initial_sidebar_state="expanded",
+     page_icon="IMG_9619.png"
      
 )
 
@@ -64,6 +65,25 @@ menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis",
 st.sidebar.divider()
 url = st.sidebar.text_input("Enter URL")
 
+if st.sidebar.button("Reset"):
+    reviews_set = None  # Reset variable
+    mentions_set = None
+    stuff_set= None
+    top_words_2= None
+    top_words_3= None
+    top_words_4= None
+    order= None
+    dishes= None
+    service_counts= None
+    meal_counts= None
+    price_counts= None
+    parking_space= None
+    parking_options= None
+    wheelchair_accessible= None
+    url = None
+    st.cache_data.clear()
+    st.experimental_rerun()
+
 if menu == "Home":
     st.title("Home/How to Use!")
 
@@ -71,22 +91,22 @@ if menu == "Home":
     
     st.write("Ever wonder what to order at a restaurant, but don't feel like reading the plethora of Google and Yelp reviews? Yea me too buddy. Hence why I created this *hopefully* cool and helpful dashboard!!")
     st.write("To ensure the best use-case of this dashboard, I will go through on how to set it up!")
-    st.write("###### **DISCLAIMER: ** CHROME WILL OPEN UP AUTOMATICALLY AND AUTOMATICALLY SCRAPE. DONT BE SCARED IF IT POPS UP OUTTA NOWHERE")
+    #st.write("###### **DISCLAIMER: ** CHROME WILL OPEN UP AUTOMATICALLY AND AUTOMATICALLY SCRAPE. DONT BE SCARED IF IT POPS UP OUTTA NOWHERE")
     st.write("First up, you will input a Google Maps URL into the text box on the left hand side! Note that the URL has to be from a very specific page, such as this: ")
     st.image("example.png", use_container_width=True)
     st.write("To do this, you can click on the restaurant name and copy that URL! otherwise it will not run.")
     st.write("If you get the URL from a page that looks like the image down below, the code will **NOT RUN**!")
     st.image("bad_example.png",use_container_width=True)
-    st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10). You should see it scrape in real-time! (So cool right!!! Don't show all your excitement at once)")
+    st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10).")
 
-    st.write("if you get an error similar to this: ")
-    st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")
-    st.write("Refresh the page!")
+    #st.write("if you get an error similar to this: ")
+    #st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")
+    #st.write("Refresh the page!")
 
 
 ####### PARSE REVIEWS#####
 
-
+@st.cache_data
 
 def scrape_data():
 
@@ -107,7 +127,7 @@ def scrape_data():
 
     # Initialize the WebDriver
     service = Service("/usr/bin/chromedriver")
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(service=service,options=options) 
 
     driver.get(url)
 
@@ -235,8 +255,6 @@ def get_top_mentions(reviews):
         mentions_dict["Mention"].append(mention)
 
     return pd.DataFrame(mentions_dict)
-
-@st.cache_data
 
 def get_other_stuff(reviews):
 
@@ -792,4 +810,5 @@ if menu == "What to Expect":
 # docker login
 # docker tag restaurant-dashboard spicyhahaha/restaurant-dashboard
 # docker push spicyhahaha/restaurant-dashboard
+
 

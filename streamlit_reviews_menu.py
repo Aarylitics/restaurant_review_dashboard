@@ -56,17 +56,6 @@ st.set_page_config(
      page_icon="aaryan_photo.jpeg"     
 )
 
-import sys
-import streamlit as st
-
-class StreamlitSuppressErrors:
-    def write(self, message):
-        pass  # Ignore all error messages
-
-sys.stderr = StreamlitSuppressErrors()  # Redirect errors to nowhere
-
-
-
 #set sidebar
 st.sidebar.image("rugelach.png", use_container_width=True)
 st.sidebar.title('Restaurant Review Dashboard')

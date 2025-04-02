@@ -53,7 +53,8 @@ st.set_page_config(
      page_title='Restaurant Review Dashboard',
      layout="wide",
      initial_sidebar_state="expanded",
-     page_icon="aaryan_photo.jpeg"     
+     page_icon="aaryan_photo.jpeg"
+     
 )
 
 #set sidebar
@@ -62,13 +63,18 @@ st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
 menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
 st.sidebar.divider()
-url = st.sidebar.text_input("Enter URL")
 
-     
+if 'url' not in st.session_state:
+    st.session_state['url'] = " "
+
+# Sidebar input for URL with session state
+st.session_state['url'] = st.sidebar.text_input("Enter URL", st.session_state['url'])
+
 st.sidebar.divider()
 st.sidebar.text("To scrape another restaurant, click 'Reset' down below!")
+
 if st.sidebar.button("Reset"):
-    reviews_set = None  # Reset variable
+    reviews_set = None  # Reset dataframes
     mentions_set = None
     stuff_set= None
     top_words_2= None
@@ -82,9 +88,9 @@ if st.sidebar.button("Reset"):
     parking_space= None
     parking_options= None
     wheelchair_accessible= None
-    url = None
+    st.session_state['url'] = " "
     st.cache_data.clear()
-    st.experimental_rerun()
+
 
 if menu == "Home":
     st.title("Home/How to Use!")
@@ -137,7 +143,7 @@ def scrape_data():
     service = Service("/usr/bin/chromedriver")
     driver = webdriver.Chrome(service=service,options=options) 
 
-    driver.get(url)
+    driver.get(st.session_state['url'])
 
     #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
     import time

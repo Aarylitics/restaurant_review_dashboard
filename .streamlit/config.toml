@@ -2,4 +2,4 @@
 showWarningOnDirectExecution = false
 
 [client]
-showErrorDetails = false
+showErrorDetails = "none"

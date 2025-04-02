@@ -57,8 +57,15 @@ st.set_page_config(
 )
 
 import sys
+import streamlit as st
 
-sys.stderr = open("error_log.txt", "w")  # Write errors to a log file
+class StreamlitSuppressErrors:
+    def write(self, message):
+        pass  # Ignore all error messages
+
+sys.stderr = StreamlitSuppressErrors()  # Redirect errors to nowhere
+
+
 
 #set sidebar
 st.sidebar.image("rugelach.png", use_container_width=True)
@@ -68,6 +75,7 @@ menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis",
 st.sidebar.divider()
 url = st.sidebar.text_input("Enter URL")
 
+     
 st.sidebar.divider()
 st.sidebar.text("To scrape another restaurant, click 'Reset' down below!")
 if st.sidebar.button("Reset"):

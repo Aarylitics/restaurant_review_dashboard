@@ -53,9 +53,12 @@ st.set_page_config(
      page_title='Restaurant Review Dashboard',
      layout="wide",
      initial_sidebar_state="expanded",
-     page_icon="aaryan_photo.jpeg"
-     
+     page_icon="aaryan_photo.jpeg"     
 )
+
+import sys
+
+sys.stderr = open("error_log.txt", "w")  # Write errors to a log file
 
 #set sidebar
 st.sidebar.image("rugelach.png", use_container_width=True)

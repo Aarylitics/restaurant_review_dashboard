@@ -723,7 +723,7 @@ if menu == "Mentions":
     ordered_transactions_binary = pd.crosstab(order_long['index'],order_long['Food']).astype('bool').astype('int')
 
 
-    frequent_itemsets = apriori(ordered_transactions_binary, min_support=0.03, use_colnames=True) #get min_support based on some math, so its good for each place
+    frequent_itemsets = apriori(ordered_transactions_binary, min_support=0.02, use_colnames=True) #get min_support based on some math, so its good for each place
 
     rules = association_rules(frequent_itemsets, metric="lift")
 

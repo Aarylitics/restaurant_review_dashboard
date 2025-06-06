@@ -61,8 +61,6 @@ st.set_page_config(
 st.sidebar.image("rugelach.png", use_container_width=True)
 st.sidebar.title('Restaurant Review Dashboard')
 st.sidebar.divider()
-menu = st.sidebar.selectbox("Select Analysis Section", ["Home", "Word Analysis", "Topic Clustering", "Mentions", "What to Expect"])
-st.sidebar.divider()
 
 if 'url' not in st.session_state:
     st.session_state['url'] = " "
@@ -92,30 +90,30 @@ if st.sidebar.button("Reset"):
     st.cache_data.clear()
 
 
-if menu == "Home":
-    st.title("Home/How to Use!")
 
-    #import os
-    #st.write(os.listdir())  # Display all files in the current directory
+st.title("Home/How to Use!")
+
+#import os
+#st.write(os.listdir())  # Display all files in the current directory
 
 
-    #Intro
-    
-    st.write("Ever wonder what to order at a restaurant, but don't feel like reading the plethora of Google and Yelp reviews? Yea me too buddy. Hence why I created this *hopefully* cool and helpful dashboard!!")
-    st.write("To ensure the best use-case of this dashboard, I will go through on how to set it up!")
-    st.write("###### **DISCLAIMER: ** THERE ARE SO SO SOOOO MANY LIMITATIONS WITH THIS DASHBOARD. THIS IS NOT A PERFECT OUTPUT! IF TWO PLUS PEOPLE ARE RUNNING THIS AT THE SAME TIME, THE FIRST ONE TO RUN IT WILL HAVE THE WINNING OUTPUT. I AM WORKING ON IT.")
-    st.write("First up, you will input a Google Maps URL into the text box on the left hand side! Note that the URL has to be from a very specific page, such as this: ")
-    st.image("example.png", use_container_width=True)
-    st.write("To do this, you can click on the restaurant name and copy that URL! otherwise it will not run.")
-    st.write("If you get the URL from a page that looks like the image down below, the code will **NOT RUN**!")
-    st.image("bad_example.png",use_container_width=True)
-    st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10).")
-    st.write("If you currently see a restaurant in the left-hand side, that means someone prior to you has used it! Huzzah, you can look at that information and steal it! To remove it, click the reset button, and then 'rerun' in the three-dot menu (top right side!)")
-    st.write("To look at other restaurants, clear the text box on the left-hand side and click 'Reset'! This will ensure that you are starting a new slate.")
+#Intro
 
-    #st.write("if you get an error similar to this: ")
-    #st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")
-    #st.write("Refresh the page!")
+st.write("Ever wonder what to order at a restaurant, but don't feel like reading the plethora of Google and Yelp reviews? Yea me too buddy. Hence why I created this *hopefully* cool and helpful dashboard!!")
+st.write("To ensure the best use-case of this dashboard, I will go through on how to set it up!")
+st.write("###### **DISCLAIMER: ** THERE ARE SO SO SOOOO MANY LIMITATIONS WITH THIS DASHBOARD. THIS IS NOT A PERFECT OUTPUT! IF TWO PLUS PEOPLE ARE RUNNING THIS AT THE SAME TIME, THE FIRST ONE TO RUN IT WILL HAVE THE WINNING OUTPUT. I AM WORKING ON IT.")
+st.write("First up, you will input a Google Maps URL into the text box on the left hand side! Note that the URL has to be from a very specific page, such as this: ")
+st.image("example.png", use_container_width=True)
+st.write("To do this, you can click on the restaurant name and copy that URL! otherwise it will not run.")
+st.write("If you get the URL from a page that looks like the image down below, the code will **NOT RUN**!")
+st.image("bad_example.png",use_container_width=True)
+st.write("After inserting the URL, the code will run for a good while (like uhhh 2 minutes to maybe 10).")
+st.write("If you currently see a restaurant in the left-hand side, that means someone prior to you has used it! Huzzah, you can look at that information and steal it! To remove it, click the reset button, and then 'rerun' in the three-dot menu (top right side!)")
+st.write("To look at other restaurants, clear the text box on the left-hand side and click 'Reset'! This will ensure that you are starting a new slate.")
+
+#st.write("if you get an error similar to this: ")
+#st.write("*'Unable to locate element: 'method':'xpath','selector':'//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div[2]/div/div[2]/div[1]*")
+#st.write("Refresh the page!")
 
 
 ####### PARSE REVIEWS#####
@@ -123,7 +121,7 @@ if menu == "Home":
 @st.cache_data
 
 def scrape_data():
-
+    
     # Set Chrome options
     options = Options()
     # chrome_options.add_argument('--disable-gpu')
@@ -150,60 +148,58 @@ def scrape_data():
     time.sleep(3)
 
     #obtain title
-rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
+    rest_name = driver.find_element(By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/h1').text
 
-#obtain resturant type
-rest_type = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
+    #obtain resturant type
+    rest_type = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text
 
-#obtain restaurant value
-value = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
+    #obtain restaurant value
+    value = driver.find_element(By.XPATH,'//*[@id="QA0Szd"]/div/div/div[1]/div[2]/div/div[1]/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span').text
 
-#get restaurant address
-#address = driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div[8]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[9]/div[3]/button/div/div[2]/div[1]").text
-#can create a dictionary, key is state, div number is entry; search for state, if state, then that div number
+    #get restaurant address
+    #address = driver.find_element(By.XPATH, "/html/body/div[1]/div[3]/div[8]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[9]/div[3]/button/div/div[2]/div[1]").text
+    #can create a dictionary, key is state, div number is entry; search for state, if state, then that div number
 
-#if need to go thru newer reviews first, insert that in here:
+    #if need to go thru newer reviews first, insert that in here:
 
-#code chunk below helps us find review button. Got this code off of medium
-driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
+    #code chunk below helps us find review button. Got this code off of medium
+    driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
+    
+    #QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontDisplayLarge
+    
+    #obtain rating
+    total_rating = driver.find_element(By.CSS_SELECTOR, '#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontDisplayLarge').text
+    
+    #scroll till all reviews are loaded up
+        #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
+    num_reviews = driver.find_element(By.CSS_SELECTOR,'#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontBodySmall').text.split(" ")[0] #this code gives us the number
 
-#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontDisplayLarge
+    #some reviews may have columns, will want to take that out
+    if num_reviews.find(",") != -1:  # Check if comma is found
+        num_reviews = num_reviews.replace(",", "")
+    else:
+        num_reviews = num_reviews
 
-#obtain rating
-total_rating = driver.find_element(By.CSS_SELECTOR, '#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontDisplayLarge').text
 
-#scroll till all reviews are loaded up
-    #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
-num_reviews = driver.find_element(By.CSS_SELECTOR,'#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontBodySmall').text.split(" ")[0] #this code gives us the number
+    #now that we have number of reviews, we can scroll through reviews and load up each review
 
-#some reviews may have columns, will want to take that out
-if num_reviews.find(",") != -1:  # Check if comma is found
-    num_reviews = num_reviews.replace(",", "")
-else:
-    num_reviews = num_reviews
+    height = 0
+    while height <= (int(num_reviews)):
+        try:
+            scroll_element = driver.find_element(By.CSS_SELECTOR, "#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde") #want to scroll first; finds scroll bar element
+            try: #find "more"
+                more_element = driver.find_element(By.XPATH, "//button[@aria-label='See more']")
+                if more_element.get_attribute("aria-expanded") == "false":
+                    more_element.click()
+                    time.sleep(.25) #might try (int(num_reviews)/10) (would need to divide by the number of 0's plus 2) len(str(num_reviews)).
+            except NoSuchElementException: #scroll if no "more"
+                driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_element)
+                time.sleep(.25)
+        except NoSuchElementException:
+            print("Scrollbar element not found.")
+            break
+        height += 1 #once height is reached... or it doesnt touch anymore, break
 
-from selenium.common.exceptions import NoSuchElementException
-
-#now that we have number of reviews, we can scroll through reviews and load up each review
-time.sleep(3)
-
-height = 0
-while height <= (int(num_reviews)):
-    try:
-        scroll_element = driver.find_element(By.XPATH, "//*[@id='QA0Szd']/div/div/div[1]/div[2]/div/div[1]/div/div/div[4]") #want to scroll first; finds scroll bar element
-        try: #find "more"
-            more_element = driver.find_element(By.XPATH, "//button[@aria-label='See more']") 
-            if more_element.get_attribute("aria-expanded") == "false":
-                more_element.click()
-                time.sleep(.25) #might try (int(num_reviews)/10) (would need to divide by the number of 0's plus 2) len(str(num_reviews)).
-        except NoSuchElementException: #scroll if no "more"
-            driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_element)
-            time.sleep(.25)
-    except NoSuchElementException:
-        print("Scrollbar element not found.")
-        break
-    height += 1 #once height is reached... or it doesnt touch anymore, break
-     
     #acquire reviews and parse them into a dataset #obtained from medium: https://medium.com/@isguzarsezgin/scraping-google-reviews-with-selenium-python-23135ffcc331
     reviews = BeautifulSoup(driver.page_source,'html.parser')
     driver.quit()
@@ -479,7 +475,7 @@ reviews_set.loc[reviews_set['review_class'] == 'negative', 'review_num_class'] =
 
 
 ####### Word Analysis #####
-if menu == "Word Analysis":
+def Word_Analysis():
     st.title("Word Analysis")
     st.write(f"Self-Explanatory, but this section tells you the most common words at {rest_name}! This enables you to kinda gauge what people talk about and order!")
     #get top words
@@ -566,7 +562,7 @@ if menu == "Word Analysis":
 
 
 ######## TOPIC CLUSTERING ###########
-if menu == "Topic Clustering":
+def Topic_Clustering():
     st.title("Topic Clustering")
 
 
@@ -608,7 +604,7 @@ if menu == "Topic Clustering":
 
 
 ########## MENTIONS #########
-if menu == "Mentions":
+def Mentions():
     st.title("Mentions")
     st.write("I did this part because I was personally TIRED of reading all the reviews for recommended dishes and tallying them (I did not do this, but like I would have!)")
 
@@ -725,7 +721,7 @@ if menu == "Mentions":
     ordered_transactions_binary = pd.crosstab(order_long['index'],order_long['Food']).astype('bool').astype('int')
 
 
-    frequent_itemsets = apriori(ordered_transactions_binary, min_support=0.02, use_colnames=True) #get min_support based on some math, so its good for each place
+    frequent_itemsets = apriori(ordered_transactions_binary, min_support=0.03, use_colnames=True) #get min_support based on some math, so its good for each place
 
     rules = association_rules(frequent_itemsets, metric="lift")
 
@@ -737,7 +733,7 @@ if menu == "Mentions":
     pairings = rules[['antecedents','consequents']].head(20)
     st.write(pairings)
 
-if menu == "What to Expect":
+def What_to_Expect():
     st.title("What to Expect")
 
     #data for graphs below
@@ -827,4 +823,6 @@ if menu == "What to Expect":
 # docker tag restaurant-dashboard spicyhahaha/restaurant-dashboard
 # docker push spicyhahaha/restaurant-dashboard
 
+menu = st.navigation([Word_Analysis, Topic_Clustering, Mentions, What_to_Expect],position = 'sidebar',expanded = True)
+menu.run()
 

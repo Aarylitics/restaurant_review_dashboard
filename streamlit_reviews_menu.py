@@ -358,6 +358,7 @@ reviews_set["Review Rating"] = reviews_set["Review Rating"].apply(int)
 
 #get specific time periods/dates
 reviews_set["Review Time"] = reviews_set["Review Time"].apply(dateparser.parse)
+
 reviews_set["Review Time"] = reviews_set["Review Time"].apply(lambda x: x.strftime("%Y-%m-%d"))
 
 #clean up review text

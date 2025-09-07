@@ -165,11 +165,12 @@ def scrape_data():
     #code chunk below helps us find review button. Got this code off of medium
     driver.find_element(By.XPATH, "//button[contains(@aria-label, 'Reviews')]").click()
     
+    time.sleep(5)
+
     #QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontDisplayLarge
-    
+     
     #obtain rating
-    total_rating = driver.find_element(By.CSS_SELECTOR, '#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontDisplayLarge').text
-    
+    total_rating = driver.find_element(By.XPATH, '/html/body/div[1]/div[3]/div[9]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[4]/div[2]/div/div[2]/div[1]').text
     #scroll till all reviews are loaded up
         #scroll by amount -- calculate and see how many reviews are in one scroll (10 scrolls is in one scroll)
     num_reviews = driver.find_element(By.CSS_SELECTOR,'#QA0Szd > div > div > div.w6VYqd > div:nth-child(2) > div > div.e07Vkf.kA9KIf > div > div > div.m6QErb.DxyBCb.kA9KIf.dS8AEf.XiKgde > div.PPCwl > div > div.jANrlb > div.fontBodySmall').text.split(" ")[0] #this code gives us the number

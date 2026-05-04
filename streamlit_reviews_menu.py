@@ -133,6 +133,10 @@ def scrape_data():
     # chrome_options.add_argument('--disable-extensions')
     options.add_argument("--no-sandbox")  # Required for Docker
     options.add_argument("--disable-dev-shm-usage")  # Helps with resource issues
+
+    driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
+    options=options)
     
     temp_dir = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={temp_dir}") 

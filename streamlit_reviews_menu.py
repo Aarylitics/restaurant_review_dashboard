@@ -152,7 +152,7 @@ def scrape_data():
     driver.get(st.session_state['url'])
 
     #may need to define xpath for "i agree" button. Did not pop up for me, will try on someone elses device later
-   time.sleep(5) # Let initial 'Lite' page load
+    time.sleep(5) # Let initial 'Lite' page load
 
     try:
         # 1. Click on the screen to establish focus/interaction

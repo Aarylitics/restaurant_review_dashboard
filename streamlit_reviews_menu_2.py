@@ -168,7 +168,7 @@ def scrape_data():
 
     rest_name = driver.find_element(
         By.XPATH, 
-        '/html/body/div[1]/div[2]/div[9]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/div[1]/h1'
+        '/html/body/div[1]/div[2]/div[9]/div[10]/div/div/div[1]/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/div[1]/h1'
     ).text
 
     # obtain restaurant type
@@ -176,7 +176,7 @@ def scrape_data():
 
     rest_type = driver.find_element(
         By.XPATH,
-        '/html/body/div[1]/div[2]/div[9]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button'
+        '/html/body/div[1]/div[2]/div[9]/div[10]/div/div/div[1]/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button'
     ).text
 
     # obtain restaurant value
@@ -186,7 +186,7 @@ def scrape_data():
     try:
         value = driver.find_element(
             By.XPATH, 
-            '/html/body/div[1]/div[2]/div[9]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span'
+            '/html/body/div[1]/div[2]/div[9]/div[10]/div/div/div[1]/div[2]/div/div[1]/div/div/div/div[2]/div/div[1]/div[2]/div/div[1]/span/span/span/span[2]/span/span'
         ).text
     except NoSuchElementException:
         value = None
@@ -206,7 +206,7 @@ def scrape_data():
     # obtain rating
     total_rating = driver.find_element(
         By.XPATH, 
-        '/html/body/div[1]/div[2]/div[9]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[4]/div[2]/div/div[2]/div[1]'
+        '/html/body/div[1]/div[2]/div[9]/div[10]/div/div/div[1]/div[2]/div/div[1]/div/div/div[4]/div[2]/div/div[2]/div[1]'
     ).text
 
     # scroll till all reviews are loaded up
@@ -230,7 +230,7 @@ def scrape_data():
         try:
             scroll_element = driver.find_element(
                 By.XPATH,
-                '/html/body/div[1]/div[2]/div[9]/div[9]/div/div/div[1]/div[2]/div/div[1]/div/div/div[4]'
+                '/html/body/div[1]/div[2]/div[9]/div[10]/div/div/div[1]/div[2]/div/div[1]/div/div/div[4]'
             ) # want to scroll first; finds scroll bar element
 
             try: # find "more"

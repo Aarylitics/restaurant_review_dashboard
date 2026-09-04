@@ -96,7 +96,7 @@ sortedcontainers==2.4.0
 soupsieve==2.6
 squarify==0.4.4
 stack_data==0.6.3
-streamlit==1.42.2
+streamlit==1.63.0
 sympy==1.13.1
 tenacity==9.0.0
 threadpoolctl==3.5.0

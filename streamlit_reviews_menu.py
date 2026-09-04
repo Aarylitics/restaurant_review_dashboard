@@ -125,7 +125,7 @@ def scrape_data():
     # Set Chrome options
     options = Options()
     # chrome_options.add_argument('--disable-gpu')
-    # options.add_argument("--headless")  # Run in headless mode
+    options.add_argument("--headless")  # Run in headless mode
     # chrome_options.add_argument('--disable-extensions')
     options.add_argument("--no-sandbox")  # Required for Docker
     options.add_argument("--disable-dev-shm-usage")  # Helps with resource issues
